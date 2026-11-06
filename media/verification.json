@@ -1,0 +1,18 @@
+{
+  "checks": [
+    "01-portfolio: desktop renders without horizontal overflow",
+    "02-cryptonews: desktop renders without horizontal overflow",
+    "03-arbitrage: desktop renders without horizontal overflow",
+    "04-form-studio: desktop renders without horizontal overflow",
+    "05-proofkey: desktop renders without horizontal overflow",
+    "Portfolio filters: Telegram 3, websites 2",
+    "CryptoNews demo: generation, approval feedback, schedule selection",
+    "Arbitrage demo: test panel and empty positions state",
+    "FORM brief: valid input creates local result",
+    "ProofKey: actual password generation changes value",
+    "01-portfolio-mobile: 390px renders without horizontal overflow",
+    "02-crypto-mobile: 390px renders without horizontal overflow",
+    "03-form-mobile: 390px renders without horizontal overflow"
+  ],
+  "javascript_errors": []
+}

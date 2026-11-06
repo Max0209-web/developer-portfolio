@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Индивидуальный проект о создании надежных паролей: генератор, проверка стойкости и краткие правила безопасности.">
+    <title>Надежные пароли</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Надежные пароли">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Надежные пароли</span>
+      </a>
+      <nav class="nav" aria-label="Основная навигация">
+        <a href="#generator">Генератор</a>
+        <a href="#rules">Правила</a>
+        <a href="#project">Проект</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="intro">
+        <div class="intro-text">
+          <p class="kicker">Индивидуальный проект</p>
+          <h1>Создание надежных паролей без лишней сложности</h1>
+          <p class="lead">
+            Сайт показывает, как длина, уникальность и случайность влияют на стойкость пароля.
+            Генерация и проверка выполняются только в браузере.
+          </p>
+          <div class="intro-actions">
+            <a class="button primary" href="#generator">Открыть генератор</a>
+            <a class="button secondary" href="#rules">Посмотреть правила</a>
+          </div>
+        </div>
+        <figure class="intro-visual">
+          <img src="assets/password-visual.png" alt="Абстрактная схема защиты пароля">
+        </figure>
+      </section>
+
+      <section id="generator" class="section tool-section" aria-labelledby="generator-title">
+        <div class="section-head">
+          <p class="kicker">Практическая часть</p>
+          <h2 id="generator-title">Генератор и проверка</h2>
+          <p>
+            Можно сгенерировать пароль, изменить настройки и сразу увидеть оценку стойкости.
+          </p>
+        </div>
+
+        <div class="tool-grid">
+          <form class="panel generator-panel" id="password-form">
+            <div class="field">
+              <label for="password-output">Пароль</label>
+              <div class="password-row">
+                <input id="password-output" name="password" type="text" autocomplete="off" spellcheck="false" aria-describedby="privacy-note">
+                <button class="button secondary compact" type="button" id="copy-password">Скопировать</button>
+              </div>
+              <p class="note" id="privacy-note">Пароль не отправляется на сервер и не сохраняется.</p>
+            </div>
+
+            <div class="mode-row" role="group" aria-label="Режим генерации">
+              <label>
+                <input type="radio" name="mode" value="random" checked>
+                <span>Случайный</span>
+              </label>
+              <label>
+                <input type="radio" name="mode" value="phrase">
+                <span>Пасфраза</span>
+              </label>
+            </div>
+
+            <div class="field range-field" id="length-field">
+              <label for="length">Длина: <span id="length-value">18</span></label>
+              <input id="length" type="range" min="12" max="64" value="18">
+            </div>
+
+            <fieldset class="options" id="random-options">
+              <legend>Символы</legend>
+              <label><input type="checkbox" id="lowercase" checked> строчные буквы</label>
+              <label><input type="checkbox" id="uppercase" checked> прописные буквы</label>
+              <label><input type="checkbox" id="numbers" checked> цифры</label>
+              <label><input type="checkbox" id="symbols" checked> спецсимволы</label>
+            </fieldset>
+
+            <fieldset class="options hidden" id="phrase-options">
+              <legend>Пасфраза</legend>
+              <label><input type="checkbox" id="phrase-number" checked> добавить число</label>
+              <label><input type="checkbox" id="phrase-symbol" checked> добавить спецсимвол</label>
+              <label><input type="checkbox" id="phrase-title"> начать слова с заглавной буквы</label>
+            </fieldset>
+
+            <div class="button-row">
+              <button class="button primary" type="submit">Сгенерировать</button>
+              <button class="button secondary" type="button" id="clear-password">Очистить</button>
+            </div>
+          </form>
+
+          <section class="panel result-panel" aria-labelledby="result-title">
+            <h3 id="result-title">Оценка стойкости</h3>
+            <div class="meter" aria-hidden="true">
+              <span id="strength-bar"></span>
+            </div>
+            <div class="result-main">
+              <span id="strength-label">Нет пароля</span>
+              <span id="entropy-value">0 бит</span>
+            </div>
+            <dl class="stats">
+              <div>
+                <dt>Длина</dt>
+                <dd id="stat-length">0</dd>
+              </div>
+              <div>
+                <dt>Набор</dt>
+                <dd id="stat-pool">0</dd>
+              </div>
+              <div>
+                <dt>Модель подбора</dt>
+                <dd id="stat-time">нет данных</dd>
+              </div>
+            </dl>
+            <ul class="tips" id="tips-list"></ul>
+          </section>
+        </div>
+      </section>
+
+      <section id="rules" class="section rules-section" aria-labelledby="rules-title">
+        <div class="section-head">
+          <p class="kicker">Теория</p>
+          <h2 id="rules-title">Что делает пароль надежным</h2>
+        </div>
+        <div class="rules-grid">
+          <article>
+            <span class="rule-number">01</span>
+            <h3>Длина важнее внешней сложности</h3>
+            <p>Пароль от 15 символов заметно устойчивее короткого пароля с предсказуемыми заменами букв на цифры.</p>
+          </article>
+          <article>
+            <span class="rule-number">02</span>
+            <h3>Пароль должен быть уникальным</h3>
+            <p>Один пароль для разных сервисов опасен: утечка на одном сайте открывает доступ к другим аккаунтам.</p>
+          </article>
+          <article>
+            <span class="rule-number">03</span>
+            <h3>Случайность снижает предсказуемость</h3>
+            <p>Генератор паролей или несколько случайных слов лучше, чем даты, имена, команды и шаблоны с клавиатуры.</p>
+          </article>
+          <article>
+            <span class="rule-number">04</span>
+            <h3>Менеджер паролей упрощает защиту</h3>
+            <p>Менеджер помогает хранить разные пароли, автоматически заполнять формы и не держать все в памяти.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section compare-section" aria-labelledby="compare-title">
+        <div class="section-head">
+          <p class="kicker">Примеры</p>
+          <h2 id="compare-title">Сравнение подходов</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Подход</th>
+                <th>Пример</th>
+                <th>Проблема или плюс</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Короткий шаблон</td>
+                <td>Qwerty2026</td>
+                <td>Есть дата и клавиатурный шаблон, поэтому пароль легко угадать.</td>
+              </tr>
+              <tr>
+                <td>Замены символов</td>
+                <td>Pa$$w0rd</td>
+                <td>Популярные замены давно учитываются в атаках по словарю.</td>
+              </tr>
+              <tr>
+                <td>Случайный пароль</td>
+                <td>18-24 разных символа</td>
+                <td>Хорош для менеджера паролей, так как его не нужно запоминать.</td>
+              </tr>
+              <tr>
+                <td>Пасфраза</td>
+                <td>4 случайных слова</td>
+                <td>Подходит, когда пароль нужно помнить самому.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="project" class="section project-section" aria-labelledby="project-title">
+        <div class="section-head">
+          <p class="kicker">Данные проекта</p>
+          <h2 id="project-title">Индивидуальный проект</h2>
+        </div>
+        <div class="project-grid">
+          <div>
+            <h3>Автор</h3>
+            <p>Васильев Максим Дмитриевич</p>
+          </div>
+          <div>
+            <h3>Колледж</h3>
+            <p>Колледж ИТ.Москва</p>
+          </div>
+          <div>
+            <h3>Группа</h3>
+            <p>1И-6-25</p>
+          </div>
+          <div>
+            <h3>Тема</h3>
+            <p>Создание надежных паролей</p>
+          </div>
+        </div>
+        <div class="materials">
+          <div class="materials-text">
+            <h3>Материалы проекта</h3>
+            <p>По этим ссылкам можно открыть сайт, скачать презентацию и архив с файлами проекта.</p>
+          </div>
+          <div class="materials-actions">
+            <a class="button primary" href="/password-project-presentation.pptx">Скачать презентацию</a>
+            <a class="button secondary" href="/password-project-site.zip">Скачать архив проекта</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Источники: NIST SP 800-63B, NCSC Three random words, NCSC Managing your passwords.</p>
+      <p>2026. Учебный проект.</p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
