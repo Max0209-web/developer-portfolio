@@ -9,6 +9,7 @@ const body = $('#panel-body');
 let category = 'Все';
 let search = '';
 let memoryState;
+const catalogDate = $('#catalog-date');
 
 function read() {
   try {
@@ -51,13 +52,25 @@ function linePrice(line) {
 function subtotal() {
   return state.cart.reduce((sum,line) => sum+linePrice(line)*line.quantity,0);
 }
+function roomIsFree(room, date, start, hours) {
+  return !state.orders.some(order => order.room === room && order.date === date &&
+    start < order.start + order.hours && start + hours > order.start);
+}
+function startTimes(hours) {
+  return Array.from({length: 11 - hours}, (_, index) => index + 10);
+}
+function availabilityLabel(item) {
+  if (!isStudio) return left(item) ? 'В наличии: ' + left(item) : 'Распродано';
+  const first = startTimes(1).find(hour => roomIsFree(item.id, catalogDate.value, hour, 1));
+  return first === undefined ? 'На эту дату мест нет' : 'Ближайшее окно: ' + first + ':00';
+}
 function showCatalog() {
   const matching = shop.items.filter(item => (category === 'Все' || item.category === category) && item.title.toLowerCase().includes(search));
   $('#catalog-grid').innerHTML = matching.map(item => {
-    const availability = isStudio ? item.category : (left(item) ? 'В наличии: ' + left(item) : 'Распродано');
+    const availability = availabilityLabel(item);
     const label = isStudio ? 'Выбрать время' : 'Подробнее';
     return '<article class="product-card"><div class="product-photo"><img src="photos/' + item.photo + '.jpg" alt="' + item.title + '" loading="lazy"></div>' +
-      '<div class="product-copy"><small>' + availability + '</small><h3>' + item.title + '</h3><small>' + item.detail + '</small><strong>' + money.format(item.price) +
+      '<div class="product-copy"><small class="availability">' + availability + '</small><h3>' + item.title + '</h3><small>' + item.detail + '</small><strong>' + money.format(item.price) +
       (isStudio ? ' / ч' : '') + '</strong><button class="secondary" data-item="' + item.id + '" aria-label="' + label + ': ' + item.title + '">' + label + '</button></div></article>';
   }).join('') || '<p class="empty">Ничего не нашлось. Попробуйте изменить запрос.</p>';
 }
@@ -67,7 +80,7 @@ function product(item) {
   const available = left(item)-inCart(item.id);
   openPanel(item.title, '<img class="panel-img" src="photos/' + item.photo + '.jpg" alt=""><p>' + item.description + '</p><p class="panel-note">' + item.detail + '</p>' +
     '<form class="panel-form" id="add-form"><label>' + 'Отделка' + '<select name="option">' + options +
-    '</select></label><output id="item-price">' + money.format(item.price) + '</output><button class="primary"' + (available<=0 ? ' disabled' : '') +
+    '</select></label><p class="panel-note">На фото базовая отделка. Цена меняется при выборе варианта.</p><output id="item-price" aria-live="polite">' + money.format(item.price) + '</output><button class="primary"' + (available<=0 ? ' disabled' : '') +
     '>' + (available<=0 ? 'Доступное количество уже выбрано' : 'Добавить в корзину') + '</button></form>');
   const form = $('#add-form');
   const option = form.elements.option;
@@ -122,14 +135,17 @@ function checkout() {
   if (!state.cart.length) { cart(); return; }
   const fields = '<label>Получение<select name="delivery"><option value="pickup">Самовывоз</option><option value="city">Доставка по городу</option></select></label><label id="address-field" hidden>Адрес для демо<input name="address" maxlength="120" placeholder="Пример: ул. Лесная, 5"></label>';
   openPanel('Оформление', '<p class="panel-note">Демонстрационный заказ. Оплата и отправка не выполняются.</p><form id="checkout-form" class="panel-form">' +
-    fields + '<output id="checkout-total"></output><p class="panel-note" id="form-message" role="status"></p><button class="primary">Подтвердить демо-заказ</button></form>');
+    fields + '<dl class="order-breakdown"><div><dt>Товары</dt><dd id="checkout-subtotal"></dd></div><div><dt>Получение</dt><dd id="checkout-delivery"></dd></div><div><dt>Итого</dt><dd><output id="checkout-total" aria-live="polite"></output></dd></div></dl><p class="panel-note" id="form-message" role="status"></p><button class="primary">Подтвердить демо-заказ</button></form>');
   const form = $('#checkout-form');
   function deliveryCost() { return form.elements.delivery.value==='city' && subtotal()<75000 ? 990 : 0; }
   function refresh() {
     const needsAddress = form.elements.delivery.value==='city';
     $('#address-field').hidden = !needsAddress;
     form.elements.address.required = needsAddress;
-    $('#checkout-total').textContent = money.format(subtotal()+deliveryCost());
+    const shipping = deliveryCost();
+    $('#checkout-subtotal').textContent = money.format(subtotal());
+    $('#checkout-delivery').textContent = shipping ? money.format(shipping) : 'Бесплатно';
+    $('#checkout-total').textContent = money.format(subtotal() + shipping);
   }
   form.elements.delivery.addEventListener('change', refresh);
   refresh();
@@ -140,7 +156,10 @@ function checkout() {
       $('#form-message').textContent = 'Наличие изменилось. Проверьте корзину.';
       return;
     }
-    const items = state.cart.map(line => getItem(line.id).title + ' × ' + line.quantity).join(', ');
+    const items = state.cart.map(line => {
+      const item = getItem(line.id);
+      return item.title + ' (' + item.options[line.option][0] + ') × ' + line.quantity;
+    }).join(', ');
     const method = form.elements.delivery.selectedOptions[0].text;
     const receipt = {number:number('N'),lines:state.cart,total:subtotal()+deliveryCost(),summary:items+' · '+method};
     state.orders.push(receipt);
@@ -154,18 +173,23 @@ function booking(item) {
   openPanel(item.title, '<img class="panel-img" src="photos/' + item.photo + '.jpg" alt=""><p>' + item.description + '</p><p class="panel-note">' + item.detail +
     '</p><form id="booking-form" class="panel-form"><label>Дата<select name="date">' + dateOptions() +
     '</select></label><label>Длительность<select name="hours"><option value="1">1 час</option><option value="2">2 часа</option><option value="3">3 часа</option></select></label>' +
-    '<label>Начало<select name="start" required></select></label><div id="booking-slots" class="booking-slots" aria-label="Шкала доступности"></div><output id="booking-total"></output><p id="form-message" class="panel-note" role="status"></p><button class="primary">Подтвердить демо-бронь</button></form>');
+    '<input type="hidden" name="start"><fieldset class="time-picker"><legend>Начало съёмки</legend><div id="booking-slots" class="booking-slots"></div></fieldset><output id="booking-total"></output><p id="form-message" class="panel-note" role="status"></p><button class="primary" type="submit">Подтвердить демо-бронь</button></form>');
   const form = $('#booking-form');
+  form.elements.date.value = catalogDate.value;
   const duration = () => Number(form.elements.hours.value);
   function free(start) {
-    return !state.orders.some(order => order.room===item.id && order.date===form.elements.date.value &&
-      start<order.start+order.hours && start+duration()>order.start);
+    return roomIsFree(item.id, form.elements.date.value, start, duration());
   }
   function refresh() {
-    const times = Array.from({length:11-duration()},(_,index) => index+10);
-    form.elements.start.innerHTML = times.map(hour => '<option value="' + hour + '"' + (free(hour) ? '' : ' disabled') +
-      '>' + hour + ':00' + (free(hour) ? '' : ' — занято') + '</option>').join('');
+    const times = startTimes(duration());
+    const previous = Number(form.elements.start.value);
+    const firstOpen = times.find(free);
+    const selected = times.includes(previous) && free(previous) ? previous : firstOpen;
+    form.elements.start.value = selected ?? '';
     showSlots(times);
+    const hasOpenSlot = firstOpen !== undefined;
+    form.querySelector('button[type="submit"]').disabled = !hasOpenSlot;
+    $('#form-message').textContent = hasOpenSlot ? '' : 'На выбранную длительность свободных окон нет.';
     $('#booking-total').textContent = money.format(item.price*duration());
   }
   function showSlots(times) {
@@ -184,10 +208,7 @@ function booking(item) {
       choice.setAttribute('aria-pressed', String(choice===button));
     }
   });
-  form.addEventListener('change', event => {
-    if (event.target.name!=='start') refresh();
-    else showSlots(Array.from(form.elements.start.options, option => Number(option.value)));
-  });
+  form.addEventListener('change', refresh);
   refresh();
   form.addEventListener('submit', event => {
     event.preventDefault();
@@ -203,6 +224,7 @@ function booking(item) {
     const receipt = {number:number('S'),date,start,hours,room:item.id,total:item.price*hours,
       summary:item.title+' · '+form.elements.date.selectedOptions[0].text+' · '+start+':00–'+(start+hours)+':00'};
     state.orders.push(receipt);
+    catalogDate.value = date;
     const saved = save();
     update();
     confirmation('Демо-бронь создана',receipt,saved);
@@ -213,6 +235,10 @@ function confirmation(title, receipt, saved) {
     '</p><p>' + money.format(receipt.total) + '</p></div><p class="panel-note">' +
     (saved ? 'Подтверждение сохранено на этом устройстве.' : 'Хранилище браузера недоступно. Подтверждение сохранено только в этом окне.') +
     '</p><button class="primary" data-action="done">Готово</button>');
+}
+if (catalogDate) {
+  catalogDate.innerHTML = dateOptions();
+  catalogDate.addEventListener('change', showCatalog);
 }
 $('#benefits').innerHTML = shop.benefits.map(label => '<span>' + label + '</span>').join('');
 $('#info-grid').innerHTML = shop.conditions.map(([title,copy]) => '<article><h3>' + title + '</h3><p>' + copy + '</p></article>').join('');

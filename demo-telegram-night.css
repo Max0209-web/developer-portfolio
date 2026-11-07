@@ -139,3 +139,41 @@
 @media (max-width: 1080px) {
   .tg-sidebar { display: none; }
 }
+
+/* The chat comes before the decorative guide on phones. */
+main {
+  grid-template-areas: "intro chat" "extras chat";
+  grid-template-rows: auto 1fr;
+  column-gap: 6%;
+  row-gap: 0;
+}
+.story { grid-area: intro; min-width: 0; }
+.stage { grid-area: chat; min-width: 0; }
+.demo-extras { grid-area: extras; min-width: 0; }
+.demo-extras .source { margin-top: 12px; }
+@media (max-width: 850px) {
+  main {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "intro" "chat" "extras";
+    grid-template-rows: auto;
+    gap: 20px;
+    padding: 22px 5% 30px;
+  }
+  header { padding: 16px 5%; gap: 8px; }
+  header a { line-height: 1.4; }
+  .story h1 { font-size: clamp(32px, 9vw, 48px); margin: 12px 0; }
+  .story > p { line-height: 1.55; }
+  .chapters { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4px; margin: 14px 0 0; }
+  .chapter { width: 100%; min-height: 44px; padding: 7px 6px; overflow-wrap: anywhere; }
+  .stage-caption { margin-bottom: 8px; }
+  .telegram { min-height: 0; }
+  .chat-area { min-height: 0; padding: 12px 10px 15px; }
+  .tg-header { min-height: 54px; padding-inline: 10px; }
+  .key-row button { min-height: 44px; font-size: 11px; overflow-wrap: anywhere; }
+  .stage-bottom { gap: 10px; margin-top: 12px; }
+  .stage-bottom button { min-height: 44px; white-space: normal; flex: 0 0 auto; max-width: 46%; }
+  .demo-extras { display: grid; gap: 8px; }
+  .demo-guide { margin-top: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr); align-items: center; }
+  .demo-guide img { width: 100%; max-width: 225px; }
+  .demo-extras .source { justify-self: start; margin-bottom: 0; }
+}
