@@ -50,3 +50,27 @@
   .work-cover img { transition: none; }
   .work-cover:hover img, .work-cover:focus-visible img { transform: none; }
 }
+
+.work {
+  border-top-color: #ad86e147;
+  background:
+    radial-gradient(ellipse min(760px, 92vw) 520px at 17% 120px, #9a63da33, transparent 82%),
+    radial-gradient(ellipse 66% 25% at 108% 38%, #8b58cb25, transparent 84%),
+    radial-gradient(ellipse 70% 24% at -12% 70%, #9663d228, transparent 84%),
+    radial-gradient(ellipse 74% 24% at 93% 89%, #7452bb20, transparent 82%);
+}
+.work .work-heading h2 {
+  background: #30283e;
+  border-color: #725989;
+  border-top-color: #ac8ac9;
+  box-shadow: 0 0 34px #a16adc26, 0 9px 24px #110d1c40;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-reveal { animation: emerge-from-shadow .64s cubic-bezier(.2,.72,.27,1) backwards; }
+  .scroll-reveal:focus-within { opacity: 1 !important; transform: none !important; }
+}
+@keyframes emerge-from-shadow {
+  from { opacity: .22; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
