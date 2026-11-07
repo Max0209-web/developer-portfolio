@@ -60,3 +60,11 @@ if (guideCopy) {
     ? 'Загляни в настройки. Тут всё в режиме демо.'
     : 'Сначала черновик, потом кнопка «Опубликовать».';
 }
+
+const demo = document.querySelector('main');
+function dismissInteractionHint(event) {
+  if (!event.target.closest('button:not(:disabled)')) return;
+  demo.querySelector('.interaction-hint')?.remove();
+  demo.removeEventListener('click', dismissInteractionHint, true);
+}
+demo.addEventListener('click', dismissInteractionHint, true);
