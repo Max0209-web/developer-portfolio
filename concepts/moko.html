@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MOKO — кофейня с подбором напитка</title><link rel="stylesheet" href="concepts.css"></head>
+<body class="moko">
+<header class="top"><a class="logo" href="moko.html">moko<span>COFFEE CLUB</span></a><a href="../index.html#work">К работам ↗</a></header>
+<main>
+<section class="coffee-hero">
+  <div class="coffee-copy"><p class="eyebrow">КОФЕЙНЯ / ДЕМОНСТРАЦИОННЫЙ КОНЦЕПТ</p><h1>Кофе под<br>настроение.</h1><p>Сегодня хочется чего-то яркого, мягкого или крепкого? Выбери вкус, а меню подскажет, с чего начать.</p><a class="action" href="#menu">Подобрать напиток ↓</a></div>
+  <div class="coffee-art" aria-hidden="true"><span class="coffee-orbit"></span><span class="steam one"></span><span class="steam two"></span><span class="steam three"></span><div class="saucer"></div><div class="cup"><div class="coffee"></div><span>m</span></div><div class="stamp">ЗАВАРЕНО<br>С УМОМ</div></div>
+</section>
+<section id="menu" class="coffee-menu">
+  <div><p class="eyebrow">МЕНЮ / 01—03</p><h2>Чего хочется?</h2><p>Начни со вкуса. Потом можно выбрать объём.</p><div class="flavors" aria-label="Профиль вкуса"><button data-coffee="0" aria-pressed="true">Мягкого</button><button data-coffee="1" aria-pressed="false">Яркого</button><button data-coffee="2" aria-pressed="false">Крепкого</button></div></div>
+  <div class="coffee-result"><p class="eyebrow">ТВОЙ ВАРИАНТ</p><h3 id="drink">Флэт уайт</h3><p id="flavor">Сливочный, с нотами шоколада и жареного ореха.</p><label>Объём <select id="size"><option value="0">200 мл</option><option value="60">300 мл</option></select></label><div class="coffee-total"><output id="price" aria-live="polite">290 ₽</output><button id="add-drink">В демо-заказ</button></div><p id="receipt" role="status"></p></div>
+</section>
+</main>
+<footer class="bottom"><span>Меню и цены вымышлены. Заказ остаётся в демо.</span><a href="../index.html#work">Портфолио Максима ↗</a></footer>
+<script src="concepts.js"></script>
+</body></html>

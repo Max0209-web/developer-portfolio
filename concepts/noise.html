@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NOISE ROOM — ритм в браузере</title><link rel="stylesheet" href="concepts.css"></head>
+<body class="noise">
+<header class="top"><a class="logo" href="noise.html">NOISE ROOM<span>WEB AUDIO LAB</span></a><a href="../index.html#work">К работам ↗</a></header>
+<main>
+<section class="noise-hero">
+  <div><p class="eyebrow">ИНТЕРАКТИВ / 16 ШАГОВ</p><h1>Собери<br>свой бит.</h1><p>Кликни по клеткам, чтобы включить удар. Нажми «Играть» и услышишь, что получилось.</p></div>
+  <div class="record" aria-hidden="true"><div class="record-label"><span>NR</span><small>SIDE A / 01</small></div></div>
+</section>
+<section class="sequencer" aria-label="Музыкальный секвенсор">
+  <div class="transport"><button class="action" id="play" aria-pressed="false">Играть</button><label for="tempo">Темп <output id="bpm">112</output> BPM</label><input id="tempo" type="range" min="65" max="170" value="112"><button id="preset">Другой рисунок</button></div>
+  <div id="beat-grid"></div>
+  <div class="noise-foot"><span>Звук синтезируется в браузере</span><output id="beat-status" aria-live="polite">Готово к запуску</output></div>
+</section>
+</main>
+<footer class="bottom"><span>Концепт музыкального сайта</span><a href="../index.html#work">Портфолио Максима ↗</a></footer>
+<script src="concepts.js"></script>
+</body></html>
