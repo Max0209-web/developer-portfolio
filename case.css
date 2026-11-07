@@ -33,3 +33,29 @@ button:disabled { opacity: .45; cursor: default; }
   .counts { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .controls button { min-height: 44px; }
 }
+
+body { background: #efede5; color: #282b20; }
+.top { border-color: #c6c4b4; }
+a { color: #405527; }
+.intro { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(0,.8fr); align-items: end; gap: 1rem 3rem; }
+.intro > .kicker { grid-column: 1 / -1; }
+.intro h1 { font: 400 clamp(3rem,7vw,6.7rem)/.97 Georgia,serif; letter-spacing: -.062em; margin: 0; }
+.intro > p:last-child, .notes p:not(.kicker) { color: #56594a; }
+.kicker { color: #51653b; }
+.scenario { grid-template-columns: minmax(0,.82fr) minmax(0,1.18fr); align-items: start; gap: 0; border: 1px solid #bdbba9; }
+.input-card, .output-card { border: 0; border-radius: 0; }
+.input-card { background: #fffcf3; }
+.output-card { min-height: 100%; background: #e1e7d4; border-left: 1px solid #bdbba9; }
+.output-card .kicker { color: #405527; }
+#example, #result { border-top: 1px solid #bec4af; padding-top: .8rem; }
+.counts { margin-top: 1rem; }
+.counts span { background: #f7f8ee; border-color: #b6c0a6; }
+.counts strong { color: #405527; }
+button { background: #435932; color: white; }
+button.secondary { border-color: #657857; color: #405527; }
+.notes > div { border-color: #c6c4b4; }
+:focus-visible { outline-color: #456230; }
+@media (max-width: 680px) {
+  .intro, .scenario { grid-template-columns: minmax(0,1fr); }
+  .output-card { border-left: 0; border-top: 1px solid #bdbba9; }
+}

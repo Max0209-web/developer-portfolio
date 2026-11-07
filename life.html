@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>AI Life Assistant — разбор списка дел</title>
-  <link rel="stylesheet" href="case.css?v=2">
+  <link rel="stylesheet" href="case.css?v=3">
   <script src="life.js" defer></script>
 </head>
 <body>
@@ -12,19 +12,19 @@
   <main>
     <section class="intro">
       <p class="kicker">AI LIFE ASSISTANT / TELEGRAM</p>
-      <h1>Список дел.<br>Одно сообщение.</h1>
+      <h1>Разложим дела<br>по полочкам.</h1>
       <p>Вместо четырёх форм пользователь отправляет один список. Бот разделяет его на напоминание, задачу, привычку и заметку. Повторная отправка показывает, что уже было создано.</p>
     </section>
     <section class="scenario" aria-label="Разбор списка дел">
       <div class="input-card">
-        <p class="kicker">01 / СООБЩЕНИЕ</p>
+        <p class="kicker">01 / ВХОДЯЩИЕ</p>
         <pre id="example">Загрузка примера…</pre>
         <div class="controls"><button type="button" id="run" disabled>Показать разбор →</button><button type="button" id="reset" class="secondary" disabled>Сбросить</button></div>
       </div>
       <div class="output-card">
-        <p class="kicker">02 / ОТВЕТ БОТА</p>
-        <pre id="result" aria-live="polite">Здесь появится ответ обработчика.</pre>
+        <p class="kicker">02 / РАЗОБРАННЫЕ ДЕЛА</p>
         <div class="counts" id="counts" aria-label="Записи в SQLite"></div>
+        <pre id="result" aria-live="polite">Здесь появится ответ обработчика.</pre>
       </div>
     </section>
     <section class="notes">

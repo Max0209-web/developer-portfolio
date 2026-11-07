@@ -8,9 +8,27 @@ const roomButtons = [...document.querySelectorAll('[data-room]')];
 const canvas = document.getElementById('studio-canvas');
 const plan = document.getElementById('studio-plan');
 const tools = document.getElementById('view-tools');
+const walkTools = document.getElementById('walk-tools');
 const help = document.getElementById('view-help');
 const surface = document.getElementById('studio-surface');
 const modeButtons = [...document.querySelectorAll('[data-view]')];
+const fullscreen = document.getElementById('view-fullscreen');
+const viewerFrame = surface.closest('figure');
+if (document.fullscreenEnabled && viewerFrame.requestFullscreen) {
+  fullscreen.hidden=false;
+  fullscreen.addEventListener('click',async()=>{
+    try {
+      if(document.fullscreenElement===viewerFrame) await document.exitFullscreen();
+      else await viewerFrame.requestFullscreen();
+    } catch {
+      help.textContent='Полноэкранный режим недоступен.';
+    }
+  });
+  document.addEventListener('fullscreenchange',()=>{
+    fullscreen.textContent=document.fullscreenElement===viewerFrame?'Свернуть':'На весь экран';
+  });
+}
+
 const reset = modeButtons.find(button => button.dataset.view === 'reset');
 const rub = new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:0});
 let room = rooms[0];
@@ -45,6 +63,7 @@ function updateView() {
   canvas.hidden = !showModel;
   plan.toggleAttribute('hidden', showModel);
   tools.hidden = !showModel;
+  walkTools.hidden = !showModel || mode !== 'inside';
   reset.disabled = !showModel;
   for (const button of modeButtons) {
     const view = button.dataset.view;
@@ -53,7 +72,7 @@ function updateView() {
     button.setAttribute('aria-pressed', String(view === (showModel ? mode : 'plan')));
   }
   if (showModel) help.textContent = mode === 'inside'
-    ? 'Потяните, чтобы осмотреться с точки съёмки'
+    ? 'Потяните, чтобы осмотреться с точки съёмки. Для ходьбы нажмите стрелки на экране или WASD.'
     : 'Потяните за модель или используйте стрелки';
   else if (hasModel) help.textContent = 'План сверху · окно, фон и свет';
 }
@@ -79,7 +98,7 @@ for (const button of modeButtons) button.addEventListener('click',()=>{
   if (mode!=='plan') adjustCamera?.(previousMode===mode?'draw':'reset');
   else if (!renderRoom) help.textContent='План сверху · окно, фон и свет';
 });
-tools.addEventListener('click',event=>{
+surface.addEventListener('click',event=>{
   const button=event.target.closest('[data-camera]');
   if (button) adjustCamera?.(button.dataset.camera);
 });
@@ -87,7 +106,7 @@ tools.addEventListener('click',event=>{
 selectRoom(room.id);
 updateView();
 
-function setup3D(T) {
+async function setup3D(T) {
   const renderer = new T.WebGLRenderer({canvas, antialias:true, alpha:true, powerPreference:'low-power'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));
   renderer.setClearColor(0x000000,0);
@@ -95,7 +114,7 @@ function setup3D(T) {
   renderer.toneMappingExposure=1.12;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.autoUpdate=false;
-  renderer.shadowMap.type = T.PCFSoftShadowMap;
+  renderer.shadowMap.type = T.PCFShadowMap;
   const scene = new T.Scene();
   const camera = new T.OrthographicCamera(-5,5,5,-5,.1,65);
   const insideCamera = new T.PerspectiveCamera(58,1,.08,45);
@@ -104,6 +123,7 @@ function setup3D(T) {
   light.position.set(3,6,-7);
   light.castShadow=true;
   light.shadow.mapSize.set(1536,1536);
+  light.shadow.radius=2.6;
   Object.assign(light.shadow.camera,{left:-8,right:8,top:8,bottom:-8});
   light.shadow.normalBias=.018;
   light.shadow.bias=-.00018;
@@ -118,6 +138,11 @@ function setup3D(T) {
   let zoom=1;
   let roomSpan=7;
   let roomDepth=6;
+  let roomWidth=7;
+  let obstacles=[];
+  const eye = new T.Vector3();
+  const walkVectors = {forward:[0,1], backward:[0,-1], 'strafe-left':[-1,0], 'strafe-right':[1,0]};
+  const walkKeys = {KeyW:'forward', ArrowUp:'forward', KeyS:'backward', ArrowDown:'backward', KeyA:'strafe-left', ArrowLeft:'strafe-left', KeyD:'strafe-right', ArrowRight:'strafe-right'};
   const clamp = (value,min,max)=>Math.max(min,Math.min(max,value));
 
   function surfaceTexture(kind) {
@@ -159,12 +184,52 @@ function setup3D(T) {
     return texture;
   }
 
-  const oak=surfaceTexture('oak');
-  oak.repeat.set(2,2);
+  const textureLoader=new T.TextureLoader();
+  async function materialMaps(name,repeatX,repeatY) {
+    async function load(suffix) {
+      try {
+        const texture=await textureLoader.loadAsync(`textures/${name}-${suffix}.webp`);
+        texture.colorSpace=suffix==='diff'?T.SRGBColorSpace:T.NoColorSpace;
+        texture.wrapS=texture.wrapT=T.RepeatWrapping;
+        texture.repeat.set(repeatX,repeatY);
+        texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+        return texture;
+      } catch {
+        return suffix==='diff'?surfaceTexture(name==='concrete'?'plaster':name):null;
+      }
+    }
+    const [map,normalMap]=await Promise.all([load('diff'),load('normal')]);
+    return {map,normalMap};
+  }
+  const [oak,brick,concrete]=await Promise.all([
+    materialMaps('oak',2,2),
+    materialMaps('brick',2,1),
+    materialMaps('concrete',2,2),
+  ]);
   const plaster=surfaceTexture('plaster');
   const linen=surfaceTexture('linen');
-  const brick=surfaceTexture('brick');
-  brick.repeat.set(2,1);
+  const skylineSheet=document.createElement('canvas');
+  skylineSheet.width=768;
+  skylineSheet.height=256;
+  const sky=skylineSheet.getContext('2d');
+  const skyGradient=sky.createLinearGradient(0,0,0,256);
+  skyGradient.addColorStop(0,'#b5c8dc');
+  skyGradient.addColorStop(.72,'#f1e9dc');
+  skyGradient.addColorStop(1,'#d9d2c9');
+  sky.fillStyle=skyGradient;
+  sky.fillRect(0,0,768,256);
+  sky.filter='blur(3px)';
+  for(let i=0;i<22;i++) {
+    const x=i*38-16;
+    const y=169+(i*23)%54;
+    sky.fillStyle=['#c2c2bd','#c9c6bf','#b6b9b8'][i%3];
+    sky.fillRect(x,y,29+(i*7)%29,256-y);
+    sky.fillStyle='#dbd6cf';
+    for(let row=y+7;row<250;row+=13) sky.fillRect(x+6,row,17,3);
+  }
+  const skyline=new T.CanvasTexture(skylineSheet);
+  skyline.colorSpace=T.SRGBColorSpace;
+
   function add(group, geometry, color, x,y,z, options={}) {
     const mesh=new T.Mesh(geometry,new T.MeshStandardMaterial({color,roughness:.86,...options}));
     mesh.position.set(x,y,z);
@@ -258,7 +323,7 @@ function setup3D(T) {
 
   function roomGeometry(id,layout) {
     const g=new T.Group();
-    const {w,d,wall,floor,fabric,backdrop}=layout;
+    const {w,d,wall,fabric,backdrop}=layout;
     const rear=-d/2;
     const loft=id==='loft';
     const soft=id==='soft';
@@ -266,17 +331,19 @@ function setup3D(T) {
     const trim=loft?0x3d3936:0xeee7db;
     const frame=loft?0x343639:0xbeb8ae;
     box(g,w+.10,.18,d+.10,0x524840,0,-.12,0);
-    box(g,w,.035,d,floor,0,-.014,0,{map:loft?plaster:oak});
-    box(g,.13,height,d,wall,-w/2,height/2,0,{map:loft?brick:plaster,bumpMap:loft?brick:null,bumpScale:.024});
+    box(g,w,.035,d,loft?0xd9d4ca:0xeaddcc,0,-.014,0,
+      {...(loft?concrete:oak),roughness:loft?.89:.56,normalScale:new T.Vector2(.55,.55)});
+    box(g,.13,height,d,loft?0xd5b9a6:wall,-w/2,height/2,0,loft?brick:{map:plaster});
     box(g,w,.46,.14,wall,0,.23,rear,{map:plaster});
     box(g,w,.37,.14,wall,0,height-.185,rear,{map:plaster});
     box(g,.055,.11,d,trim,-w/2+.08,.055,0);
     box(g,w,.11,.055,trim,0,.055,rear+.08);
+    const view=new T.Mesh(new T.PlaneGeometry(w-.12,2.24),new T.MeshBasicMaterial({map:skyline,toneMapped:false}));
+    view.position.set(0,1.57,rear-.05);
+    g.add(view);
     const bay=w/3;
     for(let i=0;i<3;i++) {
       const x=(i-1)*bay;
-      const pane=box(g,bay-.20,2.24,.023,0xe7eced,x,1.57,rear-.025,{emissive:0xe2e8eb,emissiveIntensity:.36});
-      pane.castShadow=false;
       box(g,bay-.1,.08,.21,trim,x,.46,rear+.01);
       box(g,bay-.13,.043,.11,frame,x,1.40,rear+.025);
       box(g,.043,2.22,.085,frame,x,1.57,rear+.027);
@@ -326,7 +393,7 @@ function setup3D(T) {
     if(layout.lights===2) softbox(g,w*.15,d*.30,2.56);
     if(loft) {
       const x=-w*.19,z=d*.32;
-      box(g,2.08,.09,.81,0x966f55,x,.77,z,{map:oak});
+      box(g,2.08,.09,.81,0xba9577,x,.77,z,{...oak,roughness:.57});
       for(const dx of [-.91,.91]) for(const dz of [-.33,.33]) box(g,.057,.74,.057,0x2c2b2a,x+dx,.37,z+dz);
       box(g,.48,.31,.046,0x34393c,x,.98,z-.12).rotation.x=-.11;
       box(g,.48,.026,.29,0x34393c,x,.84,z+.018);
@@ -360,7 +427,7 @@ function setup3D(T) {
       insideCamera.aspect=aspect;
       insideCamera.fov=Math.min(74,Math.max(39,(aspect<1.2?66:58)/zoom));
       insideCamera.updateProjectionMatrix();
-      insideCamera.position.set(.05,1.56,roomDepth*.42);
+      insideCamera.position.copy(eye);
       insideCamera.rotation.set(pitch,yaw,0,'YXZ');
       renderer.render(scene,insideCamera);
       return;
@@ -388,6 +455,15 @@ function setup3D(T) {
     }
     roomSpan=Math.max(layout.w,layout.d);
     roomDepth=layout.d;
+    roomWidth=layout.w;
+    obstacles=[
+      [-roomWidth*.22,-roomDepth*.16,1.37,.63],
+      [-roomWidth*.22,-roomDepth*.16+1.31,.61,.61],
+      [roomWidth*.38,-.48,.23,1.58],
+      [roomWidth*.11,-roomDepth*.34,.37,.37],
+    ];
+    if(layout.lights===2) obstacles.push([roomWidth*.15,roomDepth*.30,.37,.37]);
+    if(id==='loft') obstacles.push([-roomWidth*.19,roomDepth*.32,1.15,.52]);
     light.color.setHex(id==='soft'?0xffd8a5:id==='loft'?0xe3e9ff:0xffe4bc);
     light.intensity=id==='soft'?2.3:3.2;
     model=roomGeometry(id,layout);
@@ -396,12 +472,23 @@ function setup3D(T) {
     renderer.shadowMap.needsUpdate=true;
     cameraAction('reset');
   }
+  function walk(side, forward, distance) {
+    const dx = (side*Math.cos(yaw)-forward*Math.sin(yaw))*distance;
+    const dz = (-side*Math.sin(yaw)-forward*Math.cos(yaw))*distance;
+    const x = clamp(eye.x+dx,-roomWidth/2+.23,roomWidth/2-.23);
+    const z = clamp(eye.z+dz,-roomDepth/2+.23,roomDepth/2-.23);
+    const blocked = (px,pz) => obstacles.some(([cx,cz,rx,rz])=>Math.abs(px-cx)<rx && Math.abs(pz-cz)<rz);
+    if (!blocked(x,eye.z)) eye.x=x;
+    if (!blocked(eye.x,z)) eye.z=z;
+  }
   function cameraAction(action) {
     if (action==='reset') {
       yaw=mode==='inside'?.15:.57;
       pitch=mode==='inside'?-.085:.49;
       zoom=1;
+      eye.set(.05,1.56,roomDepth*.42);
     }
+    if (mode==='inside' && Object.hasOwn(walkVectors,action)) walk(...walkVectors[action],.42);
     if (action==='left') yaw+=mode==='inside'?.25:-.25;
     if (action==='right') yaw+=mode==='inside'?-.25:.25;
     if (action==='zoom-in') zoom=clamp(zoom+.15,.75,1.55);
@@ -412,6 +499,7 @@ function setup3D(T) {
   canvas.addEventListener('pointerdown',event=>{
     if (event.button!==0 || !event.isPrimary) return;
     pointer={id:event.pointerId,x:event.clientX,y:event.clientY};
+    canvas.focus({preventScroll:true});
     canvas.setPointerCapture(event.pointerId);
   });
   canvas.addEventListener('pointermove',event=>{
@@ -424,6 +512,40 @@ function setup3D(T) {
   for (const type of ['pointerup','pointercancel','lostpointercapture']) {
     canvas.addEventListener(type,()=>{pointer=undefined;});
   }
+  const heldKeys=new Set();
+  let previousFrame=0;
+  let walkingFrame;
+  function walkFrame(now) {
+    walkingFrame=undefined;
+    if (mode!=='inside' || !heldKeys.size || !adjustCamera) {
+      heldKeys.clear();
+      return;
+    }
+    let side=0,forward=0;
+    for (const code of heldKeys) {
+      const vector=walkVectors[walkKeys[code]];
+      side+=vector[0];
+      forward+=vector[1];
+    }
+    const length=Math.max(1,Math.hypot(side,forward));
+    const distance=Math.min((now-previousFrame)/1000,.04)*1.65;
+    walk(side/length,forward/length,distance);
+    previousFrame=now;
+    draw();
+    walkingFrame=requestAnimationFrame(walkFrame);
+  }
+  canvas.addEventListener('keydown',event=>{
+    if (mode!=='inside' || event.ctrlKey || event.altKey || event.metaKey || !Object.hasOwn(walkKeys,event.code)) return;
+    event.preventDefault();
+    heldKeys.add(event.code);
+    if (walkingFrame===undefined) {
+      previousFrame=performance.now();
+      walkingFrame=requestAnimationFrame(walkFrame);
+    }
+  });
+  window.addEventListener('keyup',event=>heldKeys.delete(event.code));
+  canvas.addEventListener('blur',()=>heldKeys.clear());
+  window.addEventListener('blur',()=>heldKeys.clear());
   new ResizeObserver(draw).observe(surface);
   canvas.addEventListener('webglcontextlost',event=>{
     event.preventDefault();
@@ -435,8 +557,8 @@ function setup3D(T) {
   return {replaceModel,cameraAction};
 }
 
-import('./vendor/three.module.min.js').then(three=>{
-  const viewer=setup3D(three);
+import('./vendor/three.module.min.js').then(async three=>{
+  const viewer=await setup3D(three);
   renderRoom=viewer.replaceModel;
   adjustCamera=viewer.cameraAction;
   updateView();

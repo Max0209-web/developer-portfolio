@@ -1,0 +1,43 @@
+.market-label, .market-status, [data-demo="arbitrage"] .editor-label { display: none; }
+[data-demo="crypto"] {
+  background: #1b1620;
+  color: #f9edf1;
+}
+[data-demo="crypto"] header { border-color: #493644; }
+[data-demo="crypto"] .story h1 { font-family: Georgia, serif; font-weight: 400; letter-spacing: -.055em; }
+[data-demo="crypto"] .eyebrow { color: #f2b69a; }
+[data-demo="crypto"] .chapter.active { background: #422e37; border-left-color: #f0b492; color: #fff0e6; }
+[data-demo="crypto"] .stage-bottom button { background: #f0b492; color: #291b19; }
+[data-demo="arbitrage"] { background: #101717; color: #e0ecea; }
+[data-demo="arbitrage"] header { background: #151e1d; border-color: #344341; color: #bdd5cd; }
+[data-demo="arbitrage"] .market-label { display: inline; }
+[data-demo="arbitrage"] .market-status { grid-area: status; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border: 1px solid #344341; }
+.market-status > div { padding: 12px clamp(8px, 2vw, 22px); display: grid; gap: 5px; overflow-wrap: anywhere; }
+.market-status > div + div { border-left: 1px solid #344341; }
+.market-status span { font: 10px/1.4 monospace; letter-spacing: .04em; color: #a0b9b4; }
+.market-status strong { font: 600 clamp(13px,2vw,24px)/1.2 monospace; }
+[data-demo="arbitrage"] .eyebrow, [data-demo="arbitrage"] .stage-caption { color: #9ec7ba; }
+[data-demo="arbitrage"] .story h1 { font-family: Consolas, monospace; font-weight: 550; letter-spacing: -.075em; }
+[data-demo="arbitrage"] .story > p, [data-demo="arbitrage"] .note, [data-demo="arbitrage"] .stage-bottom p { color: #a5bbb6; }
+[data-demo="arbitrage"] .chapter { border-color: #344341; color: #b2c7c0; }
+[data-demo="arbitrage"] .chapter.active { background: #263b35; color: #d4f1e5; border-left-color: #a2dabb; }
+[data-demo="arbitrage"] .stage-bottom button { background: #a2dabb; color: #18261f; }
+[data-demo="arbitrage"] main { grid-template-areas: "intro" "status" "chat" "extras"; }
+@media (min-width: 851px) {
+  [data-demo="crypto"] main {
+    grid-template-columns: minmax(0,1.5fr) minmax(0,.5fr);
+    grid-template-areas: "intro intro" "chat extras";
+    row-gap: 25px;
+    column-gap: 4%;
+  }
+  [data-demo="crypto"] .story h1 { margin-block: 13px; }
+  [data-demo="crypto"] .story > p { margin-bottom: 15px; }
+  [data-demo="crypto"] .chapters { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); margin-top: 18px; }
+  [data-demo="crypto"] .demo-extras { padding-top: 26px; }
+  [data-demo="arbitrage"] main {
+    grid-template-columns: minmax(220px,.68fr) minmax(0,1.32fr);
+    grid-template-areas: "status status" "intro chat" "extras chat";
+    grid-template-rows: auto auto 1fr;
+    gap: 20px 4%;
+  }
+}

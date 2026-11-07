@@ -71,3 +71,18 @@
   .featured-product img { min-height: 0; height: auto; aspect-ratio: 1.75; }
   .featured-price button { min-height: 44px; }
 }
+
+.nord { --paper: #f9f7f1; --surface: #fffdf8; --accent: #3d4b35; --focus: #4e6344; }
+.nord .demo-bar { background: #35432f; }
+.furniture-hero { grid-template-columns: minmax(0,.77fr) minmax(0,1.23fr); gap: clamp(20px,4vw,70px); }
+.furniture-intro { grid-column: 1; grid-row: 1; }
+.furniture-cover { grid-column: 2; grid-row: 1; }
+.furniture-cover img { aspect-ratio: 1.65; }
+.furniture-intro h1 { font-size: clamp(48px,5.4vw,82px); }
+.nord .catalog { padding-block: clamp(28px,5vw,64px); }
+.nord .product-card { background: transparent; border: 0; border-bottom: 1px solid var(--line); }
+@media (max-width: 640px) {
+  .furniture-hero { grid-template-columns: minmax(0,1fr); }
+  .furniture-cover { grid-column: 1; grid-row: 2; }
+  .furniture-intro h1 { font-size: clamp(39px,11vw,56px); }
+}
