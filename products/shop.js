@@ -74,7 +74,7 @@ function showCatalog() {
       (isStudio ? ' / ч' : '') + '</strong><button class="secondary" data-item="' + item.id + '" aria-label="' + label + ': ' + item.title + '">' + label + '</button></div></article>';
   }).join('') || '<p class="empty">Ничего не нашлось. Попробуйте изменить запрос.</p>';
 }
-function product(item) {
+function product(item, initialOption = 0) {
   if (isStudio) { booking(item); return; }
   const options = item.options.map(([name,extra],index) => '<option value="' + index + '">' + name + (extra ? ' +' + money.format(extra) : '') + '</option>').join('');
   const available = left(item)-inCart(item.id);
@@ -84,6 +84,8 @@ function product(item) {
     '>' + (available<=0 ? 'Доступное количество уже выбрано' : 'Добавить в корзину') + '</button></form>');
   const form = $('#add-form');
   const option = form.elements.option;
+  option.value = String(initialOption);
+  $('#item-price').textContent = money.format(item.price + item.options[option.value][1]);
   option.addEventListener('change', () => { $('#item-price').textContent = money.format(item.price+item.options[option.value][1]); });
   form.addEventListener('submit', event => {
     event.preventDefault();
@@ -292,6 +294,13 @@ body.addEventListener('click', event => {
   if (button.dataset.action==='back') cart();
   if (button.dataset.action==='done') panel.close();
 });
+for (const selector of ['#studio-book','#featured-details']) {
+  const button = $(selector);
+  button?.addEventListener('click', () => {
+    state = read();
+    product(getItem(button.dataset.item), Number(button.dataset.option || 0));
+  });
+}
 $('#open-cart').addEventListener('click',cart);
 $('#close-panel').addEventListener('click',()=>panel.close());
 panel.addEventListener('click',event => { if (event.target===panel) panel.close(); });

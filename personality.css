@@ -162,3 +162,6 @@
 }
 .footer-about p { margin: 0 0 12px; }
 footer h2 { margin: 0 0 20px; }
+
+.hero-manager { display: none; width: fit-content; color: #c3ebdc; font-size: .85rem; text-underline-offset: .25em; }
+@media (max-width: 800px) { .hero-manager { display: block; margin-block-start: 12px; } }

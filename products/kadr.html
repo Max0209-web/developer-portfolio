@@ -3,39 +3,72 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Залы для портретов, съёмки каталога и небольших команд. Выберите зал и свободное время.">
-  <title>Студия — фотостудия / бронирование</title>
+  <meta name="description" content="Посмотрите 3D-планировку фотозалов, проверьте оборудование и выберите свободное время.">
+  <title>Студия — 3D-тур по фотозалам</title>
   <link rel="stylesheet" href="shop.css?v=2">
+  <link rel="stylesheet" href="studio.css">
   <script src="catalog.js?v=2" defer></script>
-  <script src="shop.js?v=2" defer></script>
+  <script src="shop.js?v=3" defer></script>
+  <script src="studio.js" defer></script>
 </head>
 <body class="kadr" data-product="kadr">
   <div class="demo-bar"><a href="../index.html#work">← Портфолио Максима</a><span>Демо · данные остаются в браузере</span></div>
   <header class="site-header">
     <a class="wordmark" href="kadr.html">Студия<span>ФОТОСТУДИЯ / БРОНИРОВАНИЕ</span></a>
-    <nav aria-label="Навигация"><a href="#catalog">Наши залы</a><a href="#details">Условия</a></nav>
+    <nav aria-label="Навигация"><a href="#tour">3D-тур</a><a href="#catalog">Расписание</a><a href="#details">Условия</a></nav>
     <button class="header-button" type="button" id="open-cart">Мои брони <span id="cart-count">0</span></button>
   </header>
   <main>
-    <section class="store-hero">
-      <div class="hero-copy">
-        <p class="kicker">01 / ФОТОСТУДИЯ / БРОНИРОВАНИЕ</p>
-        <h1>Фотозалы<br>в аренду</h1>
-        <p class="hero-description">Залы для портретов, съёмки каталога и небольших команд. Выберите зал и свободное время.</p>
-        <a class="primary" href="#catalog">Посмотреть залы <span aria-hidden="true">↓</span></a>
+    <section class="studio-tour wrap" id="tour" aria-labelledby="tour-title">
+      <div class="tour-intro">
+        <p class="kicker"><span></span> ФОТОСТУДИЯ / ПЛАНИРОВКА И СВЕТ</p>
+        <h1 id="tour-title">Выберите зал<br>до съёмки</h1>
+        <p class="tour-lead">Покрутите модель и посмотрите, где окно, фон и свет. Затем выберите свободное время.</p>
+        <div class="room-switch" aria-label="Выбор зала">
+          <button type="button" data-room="white" aria-pressed="true"><span>01</span> Белый зал</button>
+          <button type="button" data-room="soft" aria-pressed="false"><span>02</span> Тихий свет</button>
+          <button type="button" data-room="loft" aria-pressed="false"><span>03</span> Лофт</button>
+        </div>
+        <div class="room-summary" aria-live="polite">
+          <strong id="room-price">1 900 ₽ / ч</strong>
+          <span id="room-detail">42 м² · до 6 человек</span>
+          <p id="room-equipment">Два импульсных источника, стойки и отражатель.</p>
+        </div>
+        <button class="primary tour-book" id="studio-book" data-item="white" type="button">Выбрать время <span aria-hidden="true">↗</span></button>
       </div>
-      <img src="photos/studio.jpg" alt="Фотостудия" fetchpriority="high">
+      <figure class="tour-view">
+        <div class="view-bar"><span>ОБЗОР ЗАЛА</span><strong id="view-room">01 / БЕЛЫЙ ЗАЛ</strong></div>
+        <div class="view-surface" id="studio-surface">
+          <canvas id="studio-canvas" aria-label="Интерактивная 3D-модель выбранного зала" hidden></canvas>
+          <svg id="studio-plan" viewBox="0 0 520 350" role="img" aria-label="Схема выбранного зала"></svg>
+          <div class="view-tools" id="view-tools" hidden>
+            <button type="button" data-camera="left" aria-label="Повернуть влево">←</button>
+            <button type="button" data-camera="right" aria-label="Повернуть вправо">→</button>
+            <button type="button" data-camera="zoom-in" aria-label="Приблизить">+</button>
+            <button type="button" data-camera="zoom-out" aria-label="Отдалить">−</button>
+          </div>
+        </div>
+        <div class="view-footer">
+          <div class="view-modes" aria-label="Режим просмотра">
+            <button type="button" data-view="orbit" aria-pressed="true" disabled>3D</button>
+            <button type="button" data-view="plan" aria-pressed="false">План</button>
+            <button type="button" data-view="reset" disabled>Сбросить</button>
+          </div>
+          <span id="view-help" role="status">Загружается 3D-модель…</span>
+        </div>
+        <figcaption>Демонстрационная модель. Планировка условная, размеры указаны для примера.</figcaption>
+      </figure>
     </section>
     <div class="benefits" id="benefits"></div>
     <section class="catalog wrap" id="catalog">
-      <div class="section-title"><div><p class="kicker">02 / КАТАЛОГ</p><h2>Наши залы</h2></div><p>Выберите дату. В каждой карточке видно ближайшее свободное окно.</p></div>
+      <div class="section-title"><div><p class="kicker">02 / ВРЕМЯ И ЦЕНЫ</p><h2>Расписание залов</h2></div><p>Выберите дату. В каждой карточке видно ближайшее свободное окно.</p></div>
       <div class="studio-availability"><label for="catalog-date">Дата съёмки</label><select id="catalog-date"></select><span>Показаны свободные окна от одного часа</span></div>
       <div id="filters" class="filters"></div>
       <div id="catalog-grid" class="catalog-grid"></div>
     </section>
     <section class="details wrap" id="details"><p class="kicker">03 / КАК ЭТО РАБОТАЕТ</p><h2>Условия</h2><div id="info-grid" class="info-grid"></div></section>
   </main>
-  <footer class="site-footer wrap"><a href="../index.html#work">← Все работы</a><span>Студия · демонстрационный проект</span><a href="credits.html">Фотографии</a></footer>
+  <footer class="site-footer wrap"><a href="../index.html#work">← Все работы</a><span>Студия · демонстрационный проект</span><a href="credits.html">Фотографии</a><a href="https://t.me/minkinov">Обсудить проект с менеджером ↗</a></footer>
   <dialog id="panel" aria-labelledby="panel-title"><div class="panel-shell"><button type="button" class="close" aria-label="Закрыть" id="close-panel">×</button><div id="panel-body"></div></div></dialog>
   <div class="toast" id="toast" role="status"></div>
 </body>

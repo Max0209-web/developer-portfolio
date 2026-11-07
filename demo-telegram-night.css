@@ -177,3 +177,6 @@ main {
   .demo-guide img { width: 100%; max-width: 225px; }
   .demo-extras .source { justify-self: start; margin-bottom: 0; }
 }
+
+.demo-contact { margin-block-start: 1.25rem; font-size: .85rem; }
+.demo-contact a { color: #c3ebdc; text-underline-offset: .25em; }

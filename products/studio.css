@@ -1,0 +1,63 @@
+.kadr {
+  --paper: #11151c;
+  --surface: #1b212b;
+  --ink: #f2f3f6;
+  --muted: #a9b3c2;
+  --line: #394456;
+  --accent: #bed1ff;
+  --on-accent: #18223a;
+  --focus: #bed1ff;
+}
+.kadr .demo-bar { background: #222d45; color: #dae6ff; }
+.kadr .site-header { border-bottom: 1px solid var(--line); }
+.studio-tour { display: grid; grid-template-columns: minmax(240px,.74fr) minmax(0,1.26fr); gap: clamp(20px,4vw,64px); padding-block: clamp(26px,5vw,68px); }
+.tour-intro { min-width: 0; align-self: center; }
+.tour-intro .kicker span { display: inline-block; width: 7px; height: 7px; margin-right: 5px; background: #a9c2ff; border-radius: 50%; }
+.tour-intro h1 { font-size: clamp(44px, 5.6vw, 80px); letter-spacing: -.075em; line-height: 1; }
+.tour-lead { color: var(--muted); margin: 15px 0 20px; max-width: 36ch; }
+.room-switch { display: grid; gap: 5px; }
+.room-switch button, .view-modes button, .view-tools button {
+  border: 1px solid var(--line);
+  background: #242d3c;
+  color: var(--ink);
+  padding: 7px 11px;
+  min-height: 40px;
+  border-radius: 5px;
+}
+.room-switch button { text-align: left; }
+.room-switch button span { color: var(--muted); margin-right: 10px; font: 12px monospace; }
+.room-switch button[aria-pressed="true"], .view-modes button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.room-switch button[aria-pressed="true"] span { color: #495b85; }
+.room-summary { display: flex; align-items: baseline; flex-wrap: wrap; gap: 3px 11px; margin: 14px 0; }
+.room-summary strong { font-size: 20px; }
+.room-summary span, .room-summary p { color: var(--muted); font-size: 13px; }
+.room-summary p { flex-basis: 100%; }
+.tour-book { display: flex; justify-content: space-between; width: 100%; }
+.tour-view { min-width: 0; align-self: start; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #1b212b; }
+.view-bar { display: flex; justify-content: space-between; gap: 10px; align-items: center; min-height: 44px; padding: 8px 14px; border-bottom: 1px solid var(--line); color: var(--muted); font: 11px/1.25 monospace; letter-spacing: .08em; }
+.view-bar strong { color: #dbe5ff; }
+.view-surface { position: relative; isolation: isolate; aspect-ratio: 1.33; background: #151d29; }
+#studio-canvas, #studio-plan { display: block; width: 100%; height: 100%; position: absolute; inset: 0; }
+#studio-canvas { touch-action: pan-y; cursor: grab; }
+#studio-canvas[hidden], #studio-plan[hidden], .view-tools[hidden] { display: none; }
+#studio-canvas:active { cursor: grabbing; }
+.view-tools { position: absolute; bottom: 10px; right: 10px; display: grid; grid-template-columns: repeat(2,38px); gap: 4px; }
+.view-tools button { min-height: 38px; padding: 0; font-size: 17px; background: #252e3e; }
+.view-footer { display: flex; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; align-items: center; padding: 9px 12px; border-top: 1px solid var(--line); }
+.view-modes { display: flex; gap: 5px; }
+.view-modes button { min-height: 35px; font-size: 12px; }
+#view-help, .tour-view figcaption { color: var(--muted); font-size: 12px; }
+.tour-view figcaption { padding: 0 12px 9px; }
+.kadr .catalog { padding-top: 36px; }
+@media (max-width: 850px) {
+  .studio-tour { grid-template-columns: minmax(0,1fr); }
+  .room-switch { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .room-switch button { min-height: 44px; padding: 4px 6px; text-align: center; font-size: 12px; }
+  .room-switch button span { margin: 0; display: block; }
+  .view-modes button, .view-tools button { min-height: 44px; }
+  .view-tools { grid-template-columns: repeat(2,44px); bottom: 6px; right: 6px; }
+  .view-surface { aspect-ratio: 1.12; }
+}
