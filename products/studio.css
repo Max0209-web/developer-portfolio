@@ -47,7 +47,7 @@
 .view-tools { position: absolute; bottom: 10px; right: 10px; display: grid; grid-template-columns: repeat(2,38px); gap: 4px; }
 .view-tools button { min-height: 38px; padding: 0; font-size: 17px; background: #252e3e; }
 .view-footer { display: flex; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; align-items: center; padding: 9px 12px; border-top: 1px solid var(--line); }
-.view-modes { display: flex; gap: 5px; }
+.view-modes { display: flex; flex-wrap: wrap; gap: 5px; }
 .view-modes button { min-height: 35px; font-size: 12px; }
 #view-help, .tour-view figcaption { color: var(--muted); font-size: 12px; }
 .tour-view figcaption { padding: 0 12px 9px; }
@@ -61,3 +61,4 @@
   .view-tools { grid-template-columns: repeat(2,44px); bottom: 6px; right: 6px; }
   .view-surface { aspect-ratio: 1.12; }
 }
+.view-surface { background: radial-gradient(ellipse at 48% 43%, #343948, #222733 57%, #181d27); }

@@ -6,10 +6,10 @@
   <meta name="description" content="Посмотрите 3D-планировку фотозалов, проверьте оборудование и выберите свободное время.">
   <title>Студия — 3D-тур по фотозалам</title>
   <link rel="stylesheet" href="shop.css?v=2">
-  <link rel="stylesheet" href="studio.css">
+  <link rel="stylesheet" href="studio.css?v=2">
   <script src="catalog.js?v=2" defer></script>
   <script src="shop.js?v=3" defer></script>
-  <script src="studio.js" defer></script>
+  <script src="studio.js?v=2" defer></script>
 </head>
 <body class="kadr" data-product="kadr">
   <div class="demo-bar"><a href="../index.html#work">← Портфолио Максима</a><span>Демо · данные остаются в браузере</span></div>
@@ -23,7 +23,7 @@
       <div class="tour-intro">
         <p class="kicker"><span></span> ФОТОСТУДИЯ / ПЛАНИРОВКА И СВЕТ</p>
         <h1 id="tour-title">Выберите зал<br>до съёмки</h1>
-        <p class="tour-lead">Покрутите модель и посмотрите, где окно, фон и свет. Затем выберите свободное время.</p>
+        <p class="tour-lead">Поверните зал целиком или загляните внутрь. Посмотрите, как стоят свет, фон и мебель, и выберите время.</p>
         <div class="room-switch" aria-label="Выбор зала">
           <button type="button" data-room="white" aria-pressed="true"><span>01</span> Белый зал</button>
           <button type="button" data-room="soft" aria-pressed="false"><span>02</span> Тихий свет</button>
@@ -51,6 +51,7 @@
         <div class="view-footer">
           <div class="view-modes" aria-label="Режим просмотра">
             <button type="button" data-view="orbit" aria-pressed="true" disabled>3D</button>
+            <button type="button" data-view="inside" aria-pressed="false" disabled>Изнутри</button>
             <button type="button" data-view="plan" aria-pressed="false">План</button>
             <button type="button" data-view="reset" disabled>Сбросить</button>
           </div>
