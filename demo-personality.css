@@ -8,7 +8,7 @@
 }
 .demo-guide img {
   display: block;
-  width: min(55%, 240px);
+  width: min(67%, 330px);
   height: auto;
   flex: none;
   mask-image: linear-gradient(#000 89%, transparent);
@@ -22,6 +22,29 @@
 .story > .source { margin-top: 12px; }
 @media (max-width: 850px) {
   .demo-guide { justify-content: flex-start; gap: 16px; }
-  .demo-guide img { width: min(42%, 160px); }
+  .demo-guide img { width: min(58%, 235px); }
   .story > .source { margin-bottom: 20px; }
+}
+
+body[data-demo="crypto"] { --hint-color: #bdebd6; }
+body[data-demo="arbitrage"] { --hint-color: #d6b7fb; }
+.demo-guide span { color: var(--hint-color, #bfdbc9); }
+.interaction-hint {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  max-width: 420px;
+  margin: 4px 0 -2px;
+  color: var(--hint-color, #bdebd6);
+  pointer-events: none;
+}
+.interaction-hint span {
+  font: italic 700 clamp(13px, 1.4vw, 17px)/1.2 Georgia, serif;
+  transform: rotate(-3deg);
+}
+.interaction-hint svg {
+  width: clamp(49px, 6vw, 76px);
+  height: auto;
+  flex: none;
 }
