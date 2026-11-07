@@ -1,0 +1,141 @@
+/* Palette and solid wallpaper color from Telegram Desktop's built-in Night theme.
+   https://github.com/telegramdesktop/tdesktop/blob/dev/Telegram/Resources/night-green.tdesktop-theme */
+.telegram {
+  --tg-window: #282e33;
+  --tg-wallpaper: #18191d;
+  --tg-text: #f5f5f5;
+  --tg-muted: #82868a;
+  --tg-accent: #4be1c3;
+  --tg-message: #33393f;
+  --tg-time: #828d94;
+  --tg-active-chat: #009687;
+  --tg-service: #363c43c8;
+  background: var(--tg-window);
+  border: 1px solid #3a3f45;
+  border-radius: 9px;
+  color: var(--tg-text);
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+.tg-sidebar {
+  width: 172px;
+  background: var(--tg-window);
+  border-right: 1px solid #1f2328;
+  padding: 0;
+  text-align: left;
+}
+.tg-search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 60px;
+  padding: 0 10px;
+  color: var(--tg-time);
+}
+.tg-search {
+  flex: 1;
+  padding: 7px 10px;
+  background: #202429;
+  border-radius: 5px;
+  font-size: 12px;
+}
+.tg-conversation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 8px;
+  background: var(--tg-active-chat);
+  color: #fff;
+}
+.tg-conversation .avatar {
+  width: 34px;
+  height: 34px;
+}
+.tg-conversation-copy { min-width: 0; }
+.tg-conversation-copy strong,
+.tg-conversation-copy small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.tg-conversation-copy small { margin-top: 3px; color: #e2f9f3; }
+.tg-chat { display: flex; flex-direction: column; }
+.tg-header {
+  min-height: 60px;
+  padding: 10px 16px;
+  background: var(--tg-window);
+  color: var(--tg-text);
+  border-bottom: 1px solid #22262b;
+}
+#chat-title { font-size: 14px; font-weight: 600; }
+.tg-header small { margin-top: 3px; color: var(--tg-muted); font-size: 11px; }
+.avatar { flex: none; color: #fff; background: linear-gradient(150deg, #5bcbe3, #359ad4); }
+.more { color: var(--tg-time); }
+.chat-area {
+  flex: 1;
+  min-height: 441px;
+  padding: 14px 16px 18px;
+  background: var(--tg-wallpaper);
+}
+.date {
+  display: table;
+  margin: 0 auto 16px;
+  padding: 4px 11px;
+  border-radius: 20px;
+  background: var(--tg-service);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+}
+.bubble {
+  position: relative;
+  width: fit-content;
+  max-width: min(420px, 100%);
+  padding: 9px 11px 6px;
+  border-radius: 10px 10px 10px 2px;
+  background: var(--tg-message);
+  color: var(--tg-text);
+}
+.bubble::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  bottom: 0;
+  width: 9px;
+  height: 10px;
+  background: var(--tg-message);
+  clip-path: polygon(62% 0, 100% 0, 100% 100%, 0 100%, 42% 65%);
+}
+.sender { color: var(--tg-accent); font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+.message { font-size: 13px; line-height: 1.42; }
+.time { color: var(--tg-time); font-size: 10px; margin-top: 4px; }
+.keyboard { gap: 3px; margin-top: 4px; }
+.key-row { gap: 3px; }
+.key-row button {
+  min-height: 35px;
+  background: var(--tg-service);
+  border: 0;
+  border-radius: 5px;
+  color: #fff;
+  font: 12px "Segoe UI", Arial, sans-serif;
+  padding: 7px 5px;
+}
+.key-row button:hover { background: #464c53; }
+.composer {
+  min-height: 49px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 13px;
+  padding: 10px 15px;
+  background: var(--tg-window);
+  color: var(--tg-muted);
+  font-size: 13px;
+}
+.composer .tg-placeholder { flex: 1; color: var(--tg-muted); }
+.composer svg { flex: none; }
+.composer svg:last-child { color: var(--tg-accent); }
+@media (max-width: 1080px) {
+  .tg-sidebar { display: none; }
+}
