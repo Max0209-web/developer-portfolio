@@ -1,7 +1,6 @@
 const slug = document.body.dataset.product;
 const shop = storefronts[slug];
 const isStudio = slug === 'kadr';
-const isBakery = slug === 'korzh';
 const key = 'maxim-portfolio-' + slug + '-v1';
 const money = new Intl.NumberFormat('ru-RU', {style:'currency',currency:'RUB',maximumFractionDigits:0});
 const $ = selector => document.querySelector(selector);
@@ -67,7 +66,7 @@ function product(item) {
   const options = item.options.map(([name,extra],index) => '<option value="' + index + '">' + name + (extra ? ' +' + money.format(extra) : '') + '</option>').join('');
   const available = left(item)-inCart(item.id);
   openPanel(item.title, '<img class="panel-img" src="photos/' + item.photo + '.jpg" alt=""><p>' + item.description + '</p><p class="panel-note">' + item.detail + '</p>' +
-    '<form class="panel-form" id="add-form"><label>' + (isBakery ? 'Подача' : 'Отделка') + '<select name="option">' + options +
+    '<form class="panel-form" id="add-form"><label>' + 'Отделка' + '<select name="option">' + options +
     '</select></label><output id="item-price">' + money.format(item.price) + '</output><button class="primary"' + (available<=0 ? ' disabled' : '') +
     '>' + (available<=0 ? 'Доступное количество уже выбрано' : 'Добавить в корзину') + '</button></form>');
   const form = $('#add-form');
@@ -121,30 +120,18 @@ function number(prefix) {
 }
 function checkout() {
   if (!state.cart.length) { cart(); return; }
-  const fields = isBakery
-    ? '<label>Дата самовывоза<select name="date">' + dateOptions() + '</select></label><label>Время<select name="slot" required></select></label>'
-    : '<label>Получение<select name="delivery"><option value="pickup">Самовывоз</option><option value="city">Доставка по городу</option></select></label><label id="address-field" hidden>Адрес для демо<input name="address" maxlength="120" placeholder="Пример: ул. Лесная, 5"></label>';
+  const fields = '<label>Получение<select name="delivery"><option value="pickup">Самовывоз</option><option value="city">Доставка по городу</option></select></label><label id="address-field" hidden>Адрес для демо<input name="address" maxlength="120" placeholder="Пример: ул. Лесная, 5"></label>';
   openPanel('Оформление', '<p class="panel-note">Демонстрационный заказ. Оплата и отправка не выполняются.</p><form id="checkout-form" class="panel-form">' +
     fields + '<output id="checkout-total"></output><p class="panel-note" id="form-message" role="status"></p><button class="primary">Подтвердить демо-заказ</button></form>');
   const form = $('#checkout-form');
-  const slots = ['09:00','11:00','14:00','17:00'];
-  function slotCount(date,slot) { return state.orders.filter(order => order.date===date && order.slot===slot).length; }
-  function deliveryCost() { return !isBakery && form.elements.delivery.value==='city' && subtotal()<75000 ? 990 : 0; }
+  function deliveryCost() { return form.elements.delivery.value==='city' && subtotal()<75000 ? 990 : 0; }
   function refresh() {
-    if (isBakery) {
-      form.elements.slot.innerHTML = slots.map(slot => '<option value="' + slot + '"' +
-        (slotCount(form.elements.date.value,slot)>=4 ? ' disabled' : '') + '>' + slot +
-        (slotCount(form.elements.date.value,slot)>=4 ? ' — занято' : '') + '</option>').join('');
-    } else {
-      const needsAddress = form.elements.delivery.value==='city';
-      $('#address-field').hidden = !needsAddress;
-      form.elements.address.required = needsAddress;
-    }
+    const needsAddress = form.elements.delivery.value==='city';
+    $('#address-field').hidden = !needsAddress;
+    form.elements.address.required = needsAddress;
     $('#checkout-total').textContent = money.format(subtotal()+deliveryCost());
   }
-  form.addEventListener('change', event => {
-    if (event.target.name!=='slot') refresh();
-  });
+  form.elements.delivery.addEventListener('change', refresh);
   refresh();
   form.addEventListener('submit', event => {
     event.preventDefault();
@@ -153,16 +140,9 @@ function checkout() {
       $('#form-message').textContent = 'Наличие изменилось. Проверьте корзину.';
       return;
     }
-    const date = isBakery ? form.elements.date.value : '';
-    const slot = isBakery ? form.elements.slot.value : '';
-    if (isBakery && (!slot || slotCount(date,slot)>=4)) {
-      refresh();
-      $('#form-message').textContent = 'Окно уже занято. Выберите другое.';
-      return;
-    }
     const items = state.cart.map(line => getItem(line.id).title + ' × ' + line.quantity).join(', ');
-    const method = isBakery ? form.elements.date.selectedOptions[0].text + ', ' + slot : form.elements.delivery.selectedOptions[0].text;
-    const receipt = {number:number(isBakery?'K':'N'),date,slot,lines:state.cart,total:subtotal()+deliveryCost(),summary:items+' · '+method};
+    const method = form.elements.delivery.selectedOptions[0].text;
+    const receipt = {number:number('N'),lines:state.cart,total:subtotal()+deliveryCost(),summary:items+' · '+method};
     state.orders.push(receipt);
     state.cart = [];
     const saved = save();

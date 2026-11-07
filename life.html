@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AI Life Assistant — разбор списка дел</title>
+  <link rel="stylesheet" href="case.css">
+  <script src="life.js" defer></script>
+</head>
+<body>
+  <header class="top"><a href="index.html#work">← Портфолио Максима</a><a href="https://github.com/Max0209-web/ai-life-assistant-telegram">Репозиторий ↗</a></header>
+  <main>
+    <section class="intro">
+      <p class="kicker">AI LIFE ASSISTANT / TELEGRAM</p>
+      <h1>Список дел.<br>Одно сообщение.</h1>
+      <p>Вместо четырёх форм пользователь отправляет один список. Бот разделяет его на напоминание, задачу, привычку и заметку. Повторная отправка показывает, что уже было создано.</p>
+    </section>
+    <section class="scenario" aria-label="Разбор списка дел">
+      <div class="input-card">
+        <p class="kicker">01 / СООБЩЕНИЕ</p>
+        <pre id="example">Загрузка примера…</pre>
+        <div class="controls"><button type="button" id="run" disabled>Показать разбор →</button><button type="button" id="reset" class="secondary" disabled>Сбросить</button></div>
+      </div>
+      <div class="output-card">
+        <p class="kicker">02 / ОТВЕТ БОТА</p>
+        <pre id="result" aria-live="polite">Здесь появится ответ обработчика.</pre>
+        <div class="counts" id="counts" aria-label="Записи в SQLite"></div>
+      </div>
+    </section>
+    <section class="notes">
+      <div><p class="kicker">ЧТО ПРОВЕРИЛ</p><h2>Один список, четыре записи</h2><p>Первый вызов записал четыре разных объекта во временную SQLite. Повторный вызов нашёл дубликаты. В каждой категории осталась одна запись.</p></div>
+      <div><p class="kicker">ОТКУДА РЕЗУЛЬТАТ</p><h2>Из обработчика проекта</h2><p>Страница воспроизводит два сохранённых ответа локального прогона. Код Python на странице не запускается. Telegram, DeepSeek и платёжные сервисы в этом сценарии отключены.</p><a href="https://github.com/Max0209-web/ai-life-assistant-telegram/blob/50a4014494fc05be34cf8fd3c395af3b0f195e68/tests/test_quick_add.py">Открыть тест сценария ↗</a></div>
+    </section>
+  </main>
+</body>
+</html>

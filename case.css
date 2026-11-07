@@ -1,0 +1,29 @@
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.6 system-ui,sans-serif; background: #141520; color: #f3eef8; }
+a { color: #d0b7f9; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.top, main { width: min(1190px, 90vw); margin-inline: auto; }
+.top { display: flex; justify-content: space-between; gap: 1rem; padding: 1.25rem 0; border-bottom: 1px solid #3c374b; font-size: .85rem; }
+.intro { padding: clamp(2.6rem, 6vw, 5.3rem) 0 2rem; }
+h1, h2, p { margin: 0; }
+h1 { font-size: clamp(3rem, 7.5vw, 6.8rem); line-height: .96; letter-spacing: -.075em; margin: .7rem 0 1.2rem; }
+.intro > p:last-child, .notes p:not(.kicker) { color: #bbb2c8; max-width: 63ch; }
+.kicker { color: #c2a9e9; font-size: .72rem; font-weight: 750; letter-spacing: .13em; }
+.scenario, .notes { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.input-card, .output-card { background: #222332; border: 1px solid #3e3b50; border-radius: 14px; padding: clamp(1.1rem, 2vw, 1.9rem); }
+.output-card { background: #202c2c; border-color: #39504c; }
+.output-card .kicker { color: #a8dec8; }
+pre { margin: 1rem 0; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
+.controls { display: flex; flex-wrap: wrap; gap: .6rem; }
+button { border: 1px solid transparent; border-radius: 7px; padding: .68rem .9rem; font: 700 .9rem system-ui; cursor: pointer; background: #d1b9f9; color: #21172b; }
+button.secondary { background: transparent; border-color: #5b526a; color: #ded2ea; }
+button:disabled { opacity: .45; cursor: default; }
+:focus-visible { outline: 2px solid #bdebd9; outline-offset: 4px; }
+.counts { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .4rem; }
+.counts span { display: grid; background: #162322; border: 1px solid #435c54; border-radius: 5px; padding: .5rem; font-size: .67rem; overflow-wrap: anywhere; }
+.counts strong { font-size: 1.15rem; color: #bbebd7; }
+.notes { margin: 2rem 0 3rem; }
+.notes > div { border-top: 1px solid #41394d; padding-top: 1.15rem; }
+.notes h2 { font-size: 1.35rem; margin: .3rem 0 .5rem; }
+.notes a { display: inline-block; margin-top: .6rem; }
+@media (max-width: 680px) { .scenario, .notes { grid-template-columns: 1fr; } }

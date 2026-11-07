@@ -17,11 +17,6 @@ h2 { font-size: clamp(2.4rem, 4vw, 4.2rem); }
   --line: #d6dbd2; --accent: #284939; --on-accent: #fff; --focus: #547e68;
   --hero: #e2e8dd; --display: Georgia, serif;
 }
-.korzh {
-  --paper: #fff7e8; --surface: #fffaf0; --ink: #39241b; --muted: #6d4e3d;
-  --line: #e4cbb6; --accent: #972f24; --on-accent: #fff; --focus: #a34031;
-  --hero: #f6dfbc; --display: Georgia, serif;
-}
 .kadr {
   --paper: #171815; --surface: #21231f; --ink: #f4f1e8; --muted: #b9bdb0;
   --line: #42453b; --accent: #d8f083; --on-accent: #191f0e; --focus: #d8f083;
@@ -45,9 +40,6 @@ h2 { font-size: clamp(2.4rem, 4vw, 4.2rem); }
 .store-hero img { height: 100%; min-height: 440px; max-height: 640px; }
 .kicker { color: var(--muted); font-size: .69rem; font-weight: 750; letter-spacing: .14em; margin-bottom: 1rem; }
 .hero-description { max-width: 36ch; color: var(--muted); margin: 1.3rem 0 1.65rem; }
-.korzh .store-hero { width: min(1320px, 92%); margin: auto; border-radius: 6px 6px 32px 6px; overflow: hidden; grid-template-columns: 52% 48%; }
-.korzh .store-hero img { border-radius: 50% 0 0 50% / 45% 0 0 45%; }
-.korzh .primary { border-radius: 2rem; }
 .kadr .store-hero { position: relative; grid-template-columns: 1fr; isolation: isolate; min-height: 550px; overflow: hidden; }
 .kadr .hero-copy { z-index: 1; }
 .kadr .store-hero img { position: absolute; inset: 0; z-index: -2; max-height: none; }
@@ -108,8 +100,8 @@ dialog::backdrop { background: #0d111177; backdrop-filter: blur(3px); }
   .site-header { min-height: 66px; }
   .site-header nav { display: none; }
   .demo-bar { font-size: .66rem; }
-  .store-hero, .korzh .store-hero { grid-template-columns: 1fr; min-height: auto; }
-  .store-hero img, .korzh .store-hero img { min-height: 0; height: 260px; border-radius: 0; }
+  .store-hero { grid-template-columns: 1fr; min-height: auto; }
+  .store-hero img { min-height: 0; height: 260px; border-radius: 0; }
   .kadr .store-hero { min-height: 460px; }
   .kadr .store-hero img { height: 100%; }
   .kadr .store-hero::after { background: #1518139c; }
@@ -136,3 +128,5 @@ dialog::backdrop { background: #0d111177; backdrop-filter: blur(3px); }
 .kadr .panel-img { max-height: 205px; }
 .kadr .panel-form { gap: .75rem; }
 #form-message:empty { display: none; }
+
+.wordmark { letter-spacing: -.045em; }
